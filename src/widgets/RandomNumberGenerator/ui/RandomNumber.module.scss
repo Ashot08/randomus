@@ -1,0 +1,35 @@
+.randomNumber {
+  padding: 10px;
+  font: var(--font-l);
+  font-weight: bold;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  width: 120px;
+  height: 60px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: var(--inverted-bg-color);
+  color: var(--inverted-primary-color);
+  transition: 0.4s;
+  opacity: 0;
+}
+.visible {
+  opacity: 1;
+  animation: rotate-in-down-left 1.5s ease;
+}
+
+@keyframes rotate-in-down-left {
+  0% {
+    opacity: 0;
+    transform: translateX(2000px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-30px);
+  }
+  80% { transform: translateX(10px); }
+  100% { transform: translateX(0); }
+}

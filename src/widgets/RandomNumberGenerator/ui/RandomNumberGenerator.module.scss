@@ -1,0 +1,83 @@
+.randomNumberGenerator {
+  display: flex;
+}
+.form {
+  padding: 20px;
+  min-width: 400px;
+  background-color: var(--light-inverted-bg-color);
+  margin-right: 20px;
+  border-radius: 20px;
+  text-align: right;
+}
+.results {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: var(--light-inverted-bg-color);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.numbers {
+  min-height: 100px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.spinnerWrapper {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background-color: var(--loader-bg-color);
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.4s;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+.visible {
+  visibility: visible;
+  opacity: 1;
+  z-index: 3;
+}
+.formBlock {
+  padding-top: 20px;
+  border-top: 1px solid var(--light-inverted-bg-color);
+}
+.formRow {
+  margin-bottom: 10px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.formRowTitle {
+  text-align: left;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.numberInput {
+  padding: 10px;
+  margin-left: 6px;
+  border-radius: 6px;
+  outline: none;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  text-align: center;
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+.inputLabel {
+  margin-right: 10px;
+  &:last-child {
+    margin-right: 0;
+  }
+}
+.infoText {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

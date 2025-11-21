@@ -1,0 +1,10 @@
+.sidebar {
+  width: var(--sidebar-width);
+  height: 100%;
+  background: var(--sidebar-bg-color);
+  padding: 20px;
+}
+
+.collapsed {
+  width: var(--sidebar-collapse-width);
+}

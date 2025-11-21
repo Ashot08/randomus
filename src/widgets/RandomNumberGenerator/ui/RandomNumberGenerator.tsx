@@ -1,0 +1,174 @@
+import classes from './RandomNumberGenerator.module.scss';
+import { classNames } from 'shared/lib/classNames';
+import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import { Button } from 'shared/ui/Button/Button';
+import { generateRandomNumbers } from 'widgets/RandomNumberGenerator/lib/generateRandomNumbers';
+import { useTranslation } from 'react-i18next';
+import { Spinner } from 'shared/ui/Spinner/Spinner';
+import { RandomNumber } from './RandomNumber';
+
+interface IRandomNumberGeneratorProps {
+  className?: string;
+}
+
+enum Mode {
+  LOADING = 'LOADING',
+  LOADED = 'LOADED',
+}
+
+const MAX_FROM_TO = 1000000;
+const MIN_FROM_TO = 1;
+const MAX_NUMBERS_COUNT = 1000;
+
+export const RandomNumberGenerator = ({className}: IRandomNumberGeneratorProps) => {
+  const {t} = useTranslation();
+  const [from, setFrom] = useState(1);
+  const [to, setTo] = useState(100);
+  const [numbersCount, setNumbersCount] = useState(1);
+  const [noReplays, setNoReplays] = useState(true);
+  const [sort, setSort] = useState(false);
+  const [autoClean, setAutoClean] = useState(false);
+  const [numbers, setNumbers] = useState<number[]>([]);
+  const [mode, setMode] = useState<Mode.LOADING | Mode.LOADED>(Mode.LOADED);
+
+  const handleFrom = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleNumber(event, MAX_FROM_TO, MIN_FROM_TO, setFrom);
+  };
+  const handleTo = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleNumber(event, MAX_FROM_TO, MIN_FROM_TO, setTo);
+  };
+  const handleNumbersCount = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleNumber(event, MAX_NUMBERS_COUNT, MIN_FROM_TO, setNumbersCount);
+  };
+  const handleReplays = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNoReplays(event.target.checked);
+  }
+  const handleSort = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSort(event.target.checked);
+  }
+  const handleAutoClean = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAutoClean(event.target.checked);
+  }
+  const handleClear = () => {
+    setNumbers([]);
+  }
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    setMode(Mode.LOADING);
+    const result = generateRandomNumbers({
+      from,
+      to,
+      numbersCount,
+      noReplays,
+      sort,
+      numbers,
+    });
+
+    setTimeout(function () {
+      if (autoClean) {
+        setNumbers(result);
+      } else {
+        if (sort) {
+          setNumbers([
+              ...numbers,
+              ...result
+            ].sort((a, b) => a - b),
+          );
+        } else {
+          setNumbers([
+            ...numbers,
+            ...result]
+          );
+        }
+      }
+      setMode(Mode.LOADED);
+      console.log(`from ${from} to ${to} numbersCount ${numbersCount} replays ${noReplays} sort ${sort}`, result);
+    }, 1200);
+  }
+  const handleNumber = (event: React.ChangeEvent<HTMLInputElement>, max: number, min: number, callback: Dispatch<SetStateAction<number>>) => {
+    const value = Number.isNaN(Number(event.target.value)) ? MIN_FROM_TO : Number(event.target.value);
+    switch (true) {
+      case value > max:
+        callback(max);
+        break;
+      case value < min:
+        callback(min);
+        break;
+      default:
+        callback(value);
+    }
+  }
+
+  return (
+    <div className={classNames(classes.randomNumberGenerator, className)}>
+      <form className={classNames(classes.form)} onSubmit={handleSubmit}>
+        <div className={classNames(classes.formRow)}>
+          <div className={classNames(classes.formRowTitle)}>Диапазон:</div>
+          <label className={classNames(classes.inputLabel)}>
+            От
+            <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number" name={'from'} value={from} onChange={handleFrom}/>
+          </label>
+          <label className={classNames(classes.inputLabel)}>
+            До
+            <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number" name={'to'} value={to} onChange={handleTo}/>
+          </label>
+        </div>
+        <div className={classNames(classes.formRow)}>
+          <div className={classNames(classes.formRowTitle)}>Количество чисел:</div>
+          <label className={classNames(classes.inputLabel)}>
+            за одну генерацию
+            <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number"
+                   name={'numbersCount'} value={numbersCount}
+                   onChange={handleNumbersCount}/>
+          </label>
+        </div>
+        <div className={'space-1'}></div>
+        <div className={classNames(classes.formBlock)}>
+          <div className={classNames(classes.formRow)}>
+            <label className={classNames(classes.inputLabel)}>
+              Без повторов
+              <input type="checkbox" name={'replays'} checked={noReplays} onChange={handleReplays}/>
+            </label>
+          </div>
+          <div className={classNames(classes.formRow)}>
+            <label className={classNames(classes.inputLabel)}>
+              Сортировать по порядку
+              <input type="checkbox" name={'sort'} checked={sort} onChange={handleSort}/>
+            </label>
+          </div>
+          <div className={classNames(classes.formRow)}>
+            <label className={classNames(classes.inputLabel)}>
+              Очищать после каждой генерации
+              <input type="checkbox" name={'autoClean'} checked={autoClean} onChange={handleAutoClean}/>
+            </label>
+          </div>
+
+          <div className={classNames(classes.formRow)}>
+            <Button disabled={mode === Mode.LOADING}>Сгенерировать</Button>
+          </div>
+        </div>
+      </form>
+      <div className={classNames(classes.results)}>
+        {
+          <div className={classNames(classes.spinnerWrapper, {[classes.visible]: mode === Mode.LOADING})}>
+            <Spinner/>
+          </div>
+        }
+        {
+          (numbers.length > 0) ? <div>
+              <div className={classNames(classes.numbers)}>
+                {numbers.map((number, index) => <RandomNumber key={`${number}-${index}`} number={number}/>)}
+              </div>
+              <div>
+                <Button onClick={handleClear}>Очистить</Button>
+              </div>
+            </div>
+            :
+            <div className={classNames(classes.infoText)}>
+              {t('Нажмите "Сгенерировать", чтобы получить результат.')}
+            </div>
+        }
+      </div>
+    </div>
+  );
+};
