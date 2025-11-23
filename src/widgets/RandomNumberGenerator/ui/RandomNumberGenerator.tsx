@@ -1,11 +1,13 @@
 import classes from './RandomNumberGenerator.module.scss';
 import { classNames } from 'shared/lib/classNames';
-import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import { Dispatch, FormEvent, SetStateAction, useEffect, useState } from 'react';
 import { Button } from 'shared/ui/Button/Button';
 import { generateRandomNumbers } from 'widgets/RandomNumberGenerator/lib/generateRandomNumbers';
 import { useTranslation } from 'react-i18next';
 import { Spinner } from 'shared/ui/Spinner/Spinner';
 import { RandomNumber } from './RandomNumber';
+import NumbersMemory, { RandomusResult } from 'widgets/RandomNumberGenerator/lib/NumbersMemory';
+import { SavedResult } from 'widgets/RandomNumberGenerator/ui/SavedResult/SavedResult';
 
 interface IRandomNumberGeneratorProps {
   className?: string;
@@ -30,6 +32,11 @@ export const RandomNumberGenerator = ({className}: IRandomNumberGeneratorProps) 
   const [autoClean, setAutoClean] = useState(false);
   const [numbers, setNumbers] = useState<number[]>([]);
   const [mode, setMode] = useState<Mode.LOADING | Mode.LOADED>(Mode.LOADED);
+  const [savedResults, setSavedResults] = useState<RandomusResult[]>([]);
+
+  useEffect(() => {
+    setSavedResults(NumbersMemory.getResults());
+  }, [savedResults]);
 
   const handleFrom = (event: React.ChangeEvent<HTMLInputElement>) => {
     handleNumber(event, MAX_FROM_TO, MIN_FROM_TO, setFrom);
@@ -99,55 +106,78 @@ export const RandomNumberGenerator = ({className}: IRandomNumberGeneratorProps) 
     }
   }
 
+  const handleSave = () => {
+    setSavedResults([]);
+    const timestamp = Date.now();
+    NumbersMemory.addResult({
+      timestamp, numbers,
+    });
+  }
+
   return (
     <div className={classNames(classes.randomNumberGenerator, className)}>
-      <form className={classNames(classes.form)} onSubmit={handleSubmit}>
-        <div className={classNames(classes.formRow)}>
-          <div className={classNames(classes.formRowTitle)}>Диапазон:</div>
-          <label className={classNames(classes.inputLabel)}>
-            От
-            <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number" name={'from'} value={from} onChange={handleFrom}/>
-          </label>
-          <label className={classNames(classes.inputLabel)}>
-            До
-            <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number" name={'to'} value={to} onChange={handleTo}/>
-          </label>
-        </div>
-        <div className={classNames(classes.formRow)}>
-          <div className={classNames(classes.formRowTitle)}>Количество чисел:</div>
-          <label className={classNames(classes.inputLabel)}>
-            за одну генерацию
-            <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number"
-                   name={'numbersCount'} value={numbersCount}
-                   onChange={handleNumbersCount}/>
-          </label>
-        </div>
-        <div className={'space-1'}></div>
-        <div className={classNames(classes.formBlock)}>
+      <div className={classNames(classes.sidebar)}>
+        <form className={classNames(classes.form)} onSubmit={handleSubmit}>
           <div className={classNames(classes.formRow)}>
+            <div className={classNames(classes.formRowTitle)}>Диапазон:</div>
             <label className={classNames(classes.inputLabel)}>
-              Без повторов
-              <input type="checkbox" name={'replays'} checked={noReplays} onChange={handleReplays}/>
+              От
+              <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number" name={'from'} value={from} onChange={handleFrom}/>
+            </label>
+            <label className={classNames(classes.inputLabel)}>
+              До
+              <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number" name={'to'} value={to} onChange={handleTo}/>
             </label>
           </div>
           <div className={classNames(classes.formRow)}>
+            <div className={classNames(classes.formRowTitle)}>Количество чисел:</div>
             <label className={classNames(classes.inputLabel)}>
-              Сортировать по порядку
-              <input type="checkbox" name={'sort'} checked={sort} onChange={handleSort}/>
+              за одну генерацию
+              <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number"
+                     name={'numbersCount'} value={numbersCount}
+                     onChange={handleNumbersCount}/>
             </label>
           </div>
-          <div className={classNames(classes.formRow)}>
-            <label className={classNames(classes.inputLabel)}>
-              Очищать после каждой генерации
-              <input type="checkbox" name={'autoClean'} checked={autoClean} onChange={handleAutoClean}/>
-            </label>
-          </div>
+          <div className={'space-1'}></div>
+          <div className={classNames(classes.formBlock)}>
+            <div className={classNames(classes.formRow)}>
+              <label className={classNames(classes.inputLabel)}>
+                Без повторов
+                <input type="checkbox" name={'replays'} checked={noReplays} onChange={handleReplays}/>
+              </label>
+            </div>
+            <div className={classNames(classes.formRow)}>
+              <label className={classNames(classes.inputLabel)}>
+                Сортировать по порядку
+                <input type="checkbox" name={'sort'} checked={sort} onChange={handleSort}/>
+              </label>
+            </div>
+            <div className={classNames(classes.formRow)}>
+              <label className={classNames(classes.inputLabel)}>
+                Очищать после каждой генерации
+                <input type="checkbox" name={'autoClean'} checked={autoClean} onChange={handleAutoClean}/>
+              </label>
+            </div>
 
-          <div className={classNames(classes.formRow)}>
-            <Button disabled={mode === Mode.LOADING}>Сгенерировать</Button>
+            <div className={classNames(classes.formRow)}>
+              <Button disabled={mode === Mode.LOADING}>Сгенерировать</Button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+        {
+          (savedResults.length > 0) && <div className={classNames(classes.savedResults)}>
+            <div className={classNames(classes.savedResultsTitle)}>Сохраненные результаты:</div>
+            {savedResults.map((savedResult, index) => {
+              return <SavedResult
+                key={`${savedResult.timestamp}-${index}`}
+                timestamp={savedResult.timestamp}
+                numbers={savedResult.numbers}
+              />
+            })}
+            </div>
+        }
+      </div>
+
       <div className={classNames(classes.results)}>
         {
           <div className={classNames(classes.spinnerWrapper, {[classes.visible]: mode === Mode.LOADING})}>
@@ -161,6 +191,7 @@ export const RandomNumberGenerator = ({className}: IRandomNumberGeneratorProps) 
               </div>
               <div>
                 <Button onClick={handleClear}>Очистить</Button>
+                <Button onClick={handleSave}>Сохранить результат</Button>
               </div>
             </div>
             :

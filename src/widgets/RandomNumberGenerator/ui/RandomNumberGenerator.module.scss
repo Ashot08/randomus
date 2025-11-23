@@ -1,13 +1,28 @@
 .randomNumberGenerator {
   display: flex;
 }
+.sidebar {
+  margin-right: 20px;
+  min-width: 400px;
+}
 .form {
+  padding: 20px;
+  background-color: var(--light-inverted-bg-color);
+  border-radius: 20px;
+  text-align: right;
+  margin-bottom: 20px;
+}
+.savedResults {
+  max-height: 400px;
+  overflow-y: auto;
   padding: 20px;
   min-width: 400px;
   background-color: var(--light-inverted-bg-color);
-  margin-right: 20px;
   border-radius: 20px;
-  text-align: right;
+}
+.savedResultsTitle {
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 .results {
   flex-grow: 1;
