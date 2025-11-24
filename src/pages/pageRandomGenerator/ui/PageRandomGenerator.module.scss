@@ -1,3 +1,10 @@
 .pageRandomGenerator {
   margin: 40px 0;
+  height: calc(100vh - var(--navbar-height));
+  overflow: auto;
+}
+@media (max-width: 900px) {
+  .pageRandomGenerator {
+    height: auto;
+  }
 }

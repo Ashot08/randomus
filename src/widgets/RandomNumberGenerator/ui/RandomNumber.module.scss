@@ -33,3 +33,11 @@
   80% { transform: translateX(10px); }
   100% { transform: translateX(0); }
 }
+
+@media (max-width: 900px) {
+  .randomNumber {
+    font: var(--font-m);
+    width: 82px;
+    height: 30px;
+  }
+}

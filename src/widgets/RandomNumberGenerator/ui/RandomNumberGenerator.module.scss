@@ -12,6 +12,7 @@
   border-radius: 20px;
   text-align: right;
   margin-bottom: 20px;
+
 }
 .savedResults {
   max-height: 400px;
@@ -114,4 +115,29 @@
   justify-content: center;
   align-items: center;
   text-align: center;
+}
+@media (max-width: 900px) {
+  .sidebar {
+    order: 2;
+    margin-right: 0;
+    width: 100%;
+    min-width: 100%;
+  }
+  .randomNumberGenerator {
+    flex-wrap: wrap;
+  }
+  .resultsWrapper {
+    margin-bottom: 20px;
+    height: 100%;
+  }
+  .results {
+    min-height: 120px;
+  }
+  .savedResults {
+    min-width: 100%;
+  }
+  .numberInput {
+    font-size: 14px;
+    padding: 8px;
+  }
 }

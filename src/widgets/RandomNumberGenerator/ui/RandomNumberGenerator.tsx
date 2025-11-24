@@ -139,6 +139,10 @@ export const RandomNumberGenerator = ({className}: IRandomNumberGeneratorProps) 
     NumbersMemory.deleteResult(result);
   }
 
+  const scrollToTop = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className={classNames(classes.randomNumberGenerator, className)}>
       <div className={classNames(classes.sidebar)}>
@@ -197,7 +201,7 @@ export const RandomNumberGenerator = ({className}: IRandomNumberGeneratorProps) 
               </div>
 
               <div className={classNames(classes.formRow)}>
-                <Button disabled={mode === Mode.LOADING}>Сгенерировать</Button>
+                <Button onClick={scrollToTop} disabled={mode === Mode.LOADING}>Сгенерировать</Button>
               </div>
             </div>
         </form>
