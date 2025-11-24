@@ -8,6 +8,7 @@ import { Spinner } from 'shared/ui/Spinner/Spinner';
 import { RandomNumber } from './RandomNumber';
 import NumbersMemory, { RandomusResult } from 'widgets/RandomNumberGenerator/lib/NumbersMemory';
 import { SavedResult } from 'widgets/RandomNumberGenerator/ui/SavedResult/SavedResult';
+import { Checkbox } from 'shared/ui/Checkbox/Checkbox';
 
 interface IRandomNumberGeneratorProps {
   className?: string;
@@ -30,6 +31,7 @@ export const RandomNumberGenerator = ({className}: IRandomNumberGeneratorProps) 
   const [noReplays, setNoReplays] = useState(true);
   const [sort, setSort] = useState(false);
   const [autoClean, setAutoClean] = useState(false);
+  const [saveEachStep, setSaveEachStep] = useState(true);
   const [numbers, setNumbers] = useState<number[]>([]);
   const [mode, setMode] = useState<Mode.LOADING | Mode.LOADED>(Mode.LOADED);
   const [savedResults, setSavedResults] = useState<RandomusResult[]>([]);
@@ -56,6 +58,10 @@ export const RandomNumberGenerator = ({className}: IRandomNumberGeneratorProps) 
   const handleAutoClean = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAutoClean(event.target.checked);
   }
+  const handleSaveEachStep = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSaveEachStep(event.target.checked);
+  }
+
   const handleClear = () => {
     setNumbers([]);
   }
@@ -88,6 +94,16 @@ export const RandomNumberGenerator = ({className}: IRandomNumberGeneratorProps) 
           );
         }
       }
+      if(saveEachStep) {
+        setSavedResults([]);
+          const timestamp = Date.now();
+          NumbersMemory.addResult({
+            timestamp,
+            numbers: [
+              ...numbers,
+              ...result],
+          });
+      }
       setMode(Mode.LOADED);
       console.log(`from ${from} to ${to} numbersCount ${numbersCount} replays ${noReplays} sort ${sort}`, result);
     }, 1200);
@@ -107,11 +123,20 @@ export const RandomNumberGenerator = ({className}: IRandomNumberGeneratorProps) 
   }
 
   const handleSave = () => {
+    setMode(Mode.LOADING);
     setSavedResults([]);
-    const timestamp = Date.now();
-    NumbersMemory.addResult({
-      timestamp, numbers,
-    });
+    setTimeout(() => {
+      const timestamp = Date.now();
+      NumbersMemory.addResult({
+        timestamp, numbers,
+      });
+      setMode(Mode.LOADED);
+    }, 1000)
+  }
+
+  const handleDelete = (result: RandomusResult) => {
+    setSavedResults([]);
+    NumbersMemory.deleteResult(result);
   }
 
   return (
@@ -122,83 +147,101 @@ export const RandomNumberGenerator = ({className}: IRandomNumberGeneratorProps) 
             <div className={classNames(classes.formRowTitle)}>Диапазон:</div>
             <label className={classNames(classes.inputLabel)}>
               От
-              <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number" name={'from'} value={from} onChange={handleFrom}/>
+              <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)}
+                     min={MIN_FROM_TO} max={MAX_FROM_TO} type="number" name={'from'} value={from}
+                     onChange={handleFrom}/>
             </label>
             <label className={classNames(classes.inputLabel)}>
               До
-              <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number" name={'to'} value={to} onChange={handleTo}/>
+              <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)}
+                     min={MIN_FROM_TO} max={MAX_FROM_TO} type="number" name={'to'} value={to} onChange={handleTo}/>
             </label>
           </div>
           <div className={classNames(classes.formRow)}>
             <div className={classNames(classes.formRowTitle)}>Количество чисел:</div>
             <label className={classNames(classes.inputLabel)}>
               за одну генерацию
-              <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)} min={MIN_FROM_TO} max={MAX_FROM_TO} type="number"
+              <input disabled={numbers.length > 0 && !autoClean} className={classNames(classes.numberInput)}
+                     min={MIN_FROM_TO} max={MAX_FROM_TO} type="number"
                      name={'numbersCount'} value={numbersCount}
                      onChange={handleNumbersCount}/>
             </label>
           </div>
-          <div className={'space-1'}></div>
-          <div className={classNames(classes.formBlock)}>
-            <div className={classNames(classes.formRow)}>
-              <label className={classNames(classes.inputLabel)}>
-                Без повторов
-                <input type="checkbox" name={'replays'} checked={noReplays} onChange={handleReplays}/>
-              </label>
-            </div>
-            <div className={classNames(classes.formRow)}>
-              <label className={classNames(classes.inputLabel)}>
-                Сортировать по порядку
-                <input type="checkbox" name={'sort'} checked={sort} onChange={handleSort}/>
-              </label>
-            </div>
-            <div className={classNames(classes.formRow)}>
-              <label className={classNames(classes.inputLabel)}>
-                Очищать после каждой генерации
-                <input type="checkbox" name={'autoClean'} checked={autoClean} onChange={handleAutoClean}/>
-              </label>
-            </div>
 
-            <div className={classNames(classes.formRow)}>
-              <Button disabled={mode === Mode.LOADING}>Сгенерировать</Button>
+            <div className={'space-1'}></div>
+            <div className={classNames(classes.formBlock)}>
+              <div className={classNames(classes.formRow)}>
+                <label className={classNames(classes.inputLabel, classes.checkboxLabel)}>
+                  <span className={classNames(classes.checkboxLabelTitle)}>Без повторов</span>
+                  <Checkbox type={'checkbox'} name={'replays'} checked={noReplays} onChange={handleReplays}/>
+                </label>
+              </div>
+              <div className={classNames(classes.formRow)}>
+                <label className={classNames(classes.inputLabel, classes.checkboxLabel)}>
+                  <span className={classNames(classes.checkboxLabelTitle)}>Сортировать по порядку</span>
+                  <Checkbox name={'sort'} checked={sort} onChange={handleSort}/>
+                </label>
+              </div>
+              <div className={classNames(classes.formRow)}>
+                <label className={classNames(classes.inputLabel, classes.checkboxLabel)}>
+                  <span className={classNames(classes.checkboxLabelTitle)}>Очищать после каждой генерации</span>
+                  <Checkbox name={'autoClean'} checked={autoClean} onChange={handleAutoClean}/>
+                </label>
+              </div>
+
+              <div className={classNames(classes.formRow)}>
+                <label className={classNames(classes.inputLabel, classes.checkboxLabel)}>
+                  <span className={classNames(classes.checkboxLabelTitle)}>Сохранять каждый шаг</span>
+                  <Checkbox name={'saveEachStep'} checked={saveEachStep} onChange={handleSaveEachStep}/>
+                </label>
+              </div>
+
+              <div className={classNames(classes.formRow)}>
+                <Button disabled={mode === Mode.LOADING}>Сгенерировать</Button>
+              </div>
             </div>
-          </div>
         </form>
         {
           (savedResults.length > 0) && <div className={classNames(classes.savedResults)}>
-            <div className={classNames(classes.savedResultsTitle)}>Сохраненные результаты:</div>
-            {savedResults.map((savedResult, index) => {
+          <div className={classNames(classes.savedResultsTitle)}>Сохраненные результаты:</div>
+            {savedResults.sort((a, b) => b.timestamp - a.timestamp).map((savedResult, index) => {
               return <SavedResult
                 key={`${savedResult.timestamp}-${index}`}
                 timestamp={savedResult.timestamp}
                 numbers={savedResult.numbers}
+                onDelete={handleDelete}
               />
             })}
             </div>
         }
       </div>
+      <div className={classNames(classes.resultsWrapper)}>
+        <div className={classNames(classes.results)}>
+          {
+            <div className={classNames(classes.spinnerWrapper, {[classes.visible]: mode === Mode.LOADING})}>
+              <Spinner/>
+            </div>
+          }
+          {
+            (numbers.length > 0) ? <div>
+                <div className={classNames(classes.numbers)}>
+                  {numbers.map((number, index) => <RandomNumber key={`${number}-${index}`} number={number}/>)}
+                </div>
+              </div>
+              :
+              <div className={classNames(classes.infoText)}>
+                {t('Нажмите "Сгенерировать", чтобы получить результат.')}
+              </div>
+          }
+        </div>
 
-      <div className={classNames(classes.results)}>
         {
-          <div className={classNames(classes.spinnerWrapper, {[classes.visible]: mode === Mode.LOADING})}>
-            <Spinner/>
-          </div>
-        }
-        {
-          (numbers.length > 0) ? <div>
-              <div className={classNames(classes.numbers)}>
-                {numbers.map((number, index) => <RandomNumber key={`${number}-${index}`} number={number}/>)}
-              </div>
-              <div>
+          (numbers.length > 0) && <div className={classNames(classes.resultsControls)}>
                 <Button onClick={handleClear}>Очистить</Button>
-                <Button onClick={handleSave}>Сохранить результат</Button>
-              </div>
-            </div>
-            :
-            <div className={classNames(classes.infoText)}>
-              {t('Нажмите "Сгенерировать", чтобы получить результат.')}
+              {!saveEachStep && <Button onClick={handleSave}>Сохранить результат</Button>}
             </div>
         }
+
       </div>
     </div>
   );

@@ -24,22 +24,10 @@ export const RoutePath: Record<AppRoutes, string> = {
 export const routeConfig: RouteProps[] = [
   {
     path: RoutePath[AppRoutes.MAIN],
-    element: <div>MAIN</div>
-  },
-  {
-    path: RoutePath[AppRoutes.PAGE_ONE],
-    element: <Suspense fallback={<PageLoader/>}><PageOne /></Suspense>
-  },
-  {
-    path: RoutePath[AppRoutes.PAGE_TWO],
-    element: <Suspense fallback={<PageLoader/>}><PageTwo /></Suspense>
+    element: <Suspense fallback={<PageLoader/>}><PageRandomGenerator/></Suspense>
   },
   {
     path: RoutePath[AppRoutes.PAGE_404],
     element: <Suspense fallback={<PageLoader/>}><Page404/></Suspense>
-  },
-  {
-    path: RoutePath[AppRoutes.PAGE_RANDOM_GENERATOR],
-    element: <Suspense fallback={<PageLoader/>}><PageRandomGenerator/></Suspense>
   },
 ];

@@ -11,8 +11,9 @@ const PageRandomGenerator = ({className} : IPageTwoProps) => {
   const {t} = useTranslation();
   return (
     <div className={classNames(classes.pageRandomGenerator, className)}>
-      {t('PageRandomGenerator')}
-      <RandomNumberGenerator />
+      <div className={classNames('container')}>
+        <RandomNumberGenerator />
+      </div>
     </div>
   );
 };

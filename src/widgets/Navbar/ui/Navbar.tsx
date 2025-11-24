@@ -1,9 +1,8 @@
 import classes from './Navbar.module.scss';
 import { classNames } from 'shared/lib/classNames';
-import { AppRoutes, RoutePath } from 'shared/config/routeConfig/routeConfig';
-import { AppLink, AppLinkTheme } from 'shared/ui/AppLink/AppLink';
 import { ThemeSwitcher } from 'widgets/ThemeSwitcher';
-import { LangSwitcher } from 'widgets/LangSwitcher';
+import LogoIcon from 'shared/assets/icons/logo.svg';
+
 
 interface INavbarProps {
   className?: string;
@@ -12,10 +11,12 @@ interface INavbarProps {
 export const Navbar = ({className} : INavbarProps) => {
   return (
     <div className={classNames(classes.navbar, className)}>
-      <AppLink to={RoutePath[AppRoutes.MAIN]}>HOME</AppLink>
-      <AppLink theme={AppLinkTheme.SECONDARY} to={RoutePath[AppRoutes.PAGE_ONE]}>ONE</AppLink>
-      <AppLink to={RoutePath[AppRoutes.PAGE_TWO]}>TWO</AppLink>
-      <AppLink to={RoutePath[AppRoutes.PAGE_RANDOM_GENERATOR]}>Random</AppLink>
+      <div className={classNames('container')}>
+        <div className={classNames(classes.navbarInner, className)}>
+          <LogoIcon width={250} height={50} viewBox={"0 0 29700 6000"} />
+          <ThemeSwitcher/>
+        </div>
+      </div>
     </div>
   );
 };

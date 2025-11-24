@@ -4,6 +4,7 @@
 .sidebar {
   margin-right: 20px;
   min-width: 400px;
+  width: 400px;
 }
 .form {
   padding: 20px;
@@ -24,13 +25,21 @@
   margin-bottom: 10px;
   font-weight: bold;
 }
-.results {
+.resultsWrapper {
   flex-grow: 1;
+}
+.results {
   padding: 20px;
   background-color: var(--light-inverted-bg-color);
   border-radius: 20px;
   position: relative;
   overflow: hidden;
+  height: 100%;
+}
+.resultsControls {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
 }
 .numbers {
   min-height: 100px;
@@ -90,9 +99,19 @@
     margin-right: 0;
   }
 }
+.checkboxLabel {
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.checkboxLabelTitle {
+  margin-right: 8px;
+}
 .infoText {
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }

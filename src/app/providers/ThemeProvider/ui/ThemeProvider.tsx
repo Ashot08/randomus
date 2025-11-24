@@ -6,7 +6,7 @@ interface Props {
 }
 
 export const ThemeProvider: FC<PropsWithChildren<Props>> = ({children}) => {
-  const defaultTheme = localStorage.getItem(LOCAL_STORAGE_THEME_KEY) as Theme || Theme.LIGHT;
+  const defaultTheme = localStorage.getItem(LOCAL_STORAGE_THEME_KEY) as Theme || Theme.DARK;
 
   const [theme, setTheme] = useState<Theme>(defaultTheme);
 

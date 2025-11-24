@@ -6,3 +6,33 @@
   border-radius: 8px;
   margin-bottom: 10px;
 }
+.controls {
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.deleteButton {
+  color: red;
+}
+.openButton {
+  color: green;
+}
+.numbers {
+  margin: 10px 0;
+  font-weight: bold;
+  display: flex;
+  flex-wrap: wrap;
+}
+.number {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  margin-right: 5px;
+  margin-bottom: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--light-bg-color);
+  border-radius: 4px;
+}

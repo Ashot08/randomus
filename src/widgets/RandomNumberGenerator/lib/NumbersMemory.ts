@@ -22,13 +22,7 @@ class NumbersMemory {
     this.saveResultsToLocalStorage();
   };
   public deleteResult(result: RandomusResult){
-    const newResults = [];
-    for (const oldResult of this.results) {
-      if(oldResult.timestamp !== result.timestamp){
-        newResults.push(result);
-      }
-    }
-    this.results = newResults;
+    this.results = this.results.filter((r) => r.timestamp !== result.timestamp);
     this.saveResultsToLocalStorage();
   }
   private getResultsFromLocalStorage(){

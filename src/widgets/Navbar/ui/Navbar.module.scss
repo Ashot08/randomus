@@ -1,5 +1,13 @@
 .navbar {
-  background-color: var(--inverted-bg-color);
+  background-color: #07082f;
   color: var(--inverted-primary-color);
   height: var(--navbar-height);
+  display: flex;
+  align-items: center;
+}
+
+.navbarInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

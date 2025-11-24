@@ -23,6 +23,17 @@
   width: 100%;
   flex-grow: 1;
 }
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 .space-1 {
   padding-top: var(--space-1);
+}
+
+@media (max-width: 1240px) {
+  .container {
+    max-width: 960px;
+  }
 }
